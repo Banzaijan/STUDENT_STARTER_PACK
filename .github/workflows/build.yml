@@ -15,9 +15,6 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Show project structure
-        run: find . -name "*.py" | head -30
-
       - name: Install dependencies
         run: |
           sudo apt-get update -qq
@@ -29,8 +26,8 @@ jobs:
 
       - name: Write buildozer.spec
         run: |
-          python3 - <<'EOF'
-          spec = """[app]
+          python3 -c "
+          spec = '''[app]
           title = Student Starter Pack
           package.name = studentstarterpack
           package.domain = com.asiatech.student
@@ -48,17 +45,26 @@ jobs:
           android.archs = arm64-v8a
           [buildozer]
           log_level = 2
-          """
-          with open("buildozer.spec", "w") as f:
-              f.write(spec)
-          print("spec written!")
-          EOF
+          '''
+          open('buildozer.spec','w').write(spec)
+          print('spec written!')
+          "
+
+      - name: Accept Android licenses
+        run: |
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
+          yes | sudo apt-get install -y sdkmanager 2>/dev/null || true
+          export ANDROID_SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
+          mkdir -p $ANDROID_SDK_ROOT/licenses
+          echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $ANDROID_SDK_ROOT/licenses/android-sdk-license
+          echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $ANDROID_SDK_ROOT/licenses/android-sdk-license
+          echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" >> $ANDROID_SDK_ROOT/licenses/android-sdk-license
+          echo "84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_SDK_ROOT/licenses/android-sdk-preview-license
+          echo "d975f751698a77b662f1254ddbeed3901e976f5a" > $ANDROID_SDK_ROOT/licenses/intel-android-extra-license
 
       - name: Build APK
         run: buildozer -v android debug
-
-      - name: List bin folder
-        run: ls -lh bin/ || echo "No bin folder"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
