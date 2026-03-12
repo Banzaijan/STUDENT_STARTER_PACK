@@ -9,9 +9,9 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -32,4 +32,18 @@ jobs:
           sed -i 's/^package.domain.*/package.domain = com.asiatech.student/' buildozer.spec
           sed -i 's/^source.include_exts.*/source.include_exts = py,png,jpg,kv,json/' buildozer.spec
           sed -i 's/^requirements.*/requirements = python3,kivy==2.3.0/' buildozer.spec
-          sed -i 's/^#android.api.*/android.api = 33/' buil
+          sed -i 's/^#android.api.*/android.api = 33/' buildozer.spec
+          sed -i 's/^#android.minapi.*/android.minapi = 21/' buildozer.spec
+          sed -i 's/^#android.ndk .*/android.ndk = 25b/' buildozer.spec
+          sed -i 's/^#android.archs.*/android.archs = arm64-v8a/' buildozer.spec
+          echo "=== buildozer.spec preview ==="
+          cat buildozer.spec
+
+      - name: Build APK
+        run: buildozer -v android debug 2>&1 | tail -80
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: StudentStarterPack
+          path: bin/*.apk
