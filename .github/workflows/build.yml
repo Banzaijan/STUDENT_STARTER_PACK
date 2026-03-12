@@ -1,56 +1,42 @@
 name: Build APK
-
 on:
   push:
     branches: [ main ]
-
 jobs:
   build:
     runs-on: ubuntu-22.04
-
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: Install dependencies
+      - name: Install deps
         run: |
-          sudo apt-get update
+          sudo apt-get update -qq
           sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config libffi-dev libssl-dev libltdl-dev
           pip install buildozer cython
 
-      - name: Create init files
+      - name: Init files
         run: |
-          touch screens/__init__.py
-          touch widgets/__init__.py
-          touch utils/__init__.py
+          touch screens/__init__.py widgets/__init__.py utils/__init__.py
+          buildozer init
 
-      - name: Create buildozer.spec
+      - name: Patch spec
         run: |
-          cat > buildozer.spec << 'EOF'
-          [app]
-          title = Student Starter Pack
-          package.name = studentstarterpack
-          package.domain = com.asiatech.student
-          source.dir = .
-          source.include_exts = py,png,jpg,kv,json
-          version = 1.0
-          requirements = python3,kivy==2.3.0
-          orientation = portrait
-          fullscreen = 0
-          android.permissions = INTERNET
-          android.api = 33
-          android.minapi = 21
-          android.ndk = 25b
-          android.archs = arm64-v8a
-          [buildozer]
-          log_level = 2
-          EOF
+          sed -i 's/^title.*/title = Student Starter Pack/' buildozer.spec
+          sed -i 's/^package.name.*/package.name = studentstarterpack/' buildozer.spec
+          sed -i 's/^package.domain.*/package.domain = com.asiatech.student/' buildozer.spec
+          sed -i 's/^source.include_exts.*/source.include_exts = py,png,jpg,kv,json/' buildozer.spec
+          sed -i 's/^requirements.*/requirements = python3,kivy==2.3.0/' buildozer.spec
+          sed -i 's/^#android.permissions.*/android.permissions = INTERNET/' buildozer.spec
+          sed -i 's/^#android.api.*/android.api = 33/' buildozer.spec
+          sed -i 's/^#android.minapi.*/android.minapi = 21/' buildozer.spec
+          sed -i 's/^#android.ndk.*/android.ndk = 25b/' buildozer.spec
+          sed -i 's/^#android.archs.*/android.archs = arm64-v8a/' buildozer.spec
 
-      - name: Build APK
+      - name: Build
         run: buildozer android debug
 
       - name: Upload APK
@@ -58,12 +44,3 @@ jobs:
         with:
           name: StudentStarterPack
           path: bin/*.apk
-```
-
----
-
-## Step 3 — Scroll down and click **Commit changes**
-
-Make sure the file path at the top shows:
-```
-.github/workflows/build.yml
