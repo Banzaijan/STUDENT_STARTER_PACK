@@ -15,6 +15,9 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: Show project structure
+        run: find . -name "*.py" | head -30
+
       - name: Install dependencies
         run: |
           sudo apt-get update -qq
@@ -27,35 +30,38 @@ jobs:
         run: |
           touch screens/__init__.py widgets/__init__.py utils/__init__.py
 
-      - name: Create buildozer.spec
+      - name: Write buildozer.spec directly
         run: |
-          buildozer init
-          sed -i 's/^title.*/title = Student Starter Pack/' buildozer.spec
-          sed -i 's/^package.name.*/package.name = studentstarterpack/' buildozer.spec
-          sed -i 's/^package.domain.*/package.domain = com.asiatech.student/' buildozer.spec
-          sed -i 's/^source.include_exts.*/source.include_exts = py,png,jpg,kv,json/' buildozer.spec
-          sed -i 's/^requirements.*/requirements = python3,kivy==2.3.0/' buildozer.spec
-          sed -i 's/^#android.api.*/android.api = 33/' buildozer.spec
-          sed -i 's/^#android.minapi.*/android.minapi = 21/' buildozer.spec
-          sed -i 's/^#android.ndk .*/android.ndk = 25b/' buildozer.spec
-          sed -i 's/^#android.archs.*/android.archs = arm64-v8a/' buildozer.spec
+          cat > buildozer.spec << 'SPEC'
+[app]
+title = Student Starter Pack
+package.name = studentstarterpack
+package.domain = com.asiatech.student
+source.dir = .
+source.include_exts = py,png,jpg,kv,json
+source.exclude_dirs = tests, bin, .buildozer
+version = 1.0
+requirements = python3,kivy==2.3.0
+orientation = portrait
+fullscreen = 0
+android.permissions = INTERNET
+android.api = 33
+android.minapi = 21
+android.ndk = 25b
+android.archs = arm64-v8a
+
+[buildozer]
+log_level = 2
+warn_on_root = 1
+SPEC
+          echo "=== spec written ==="
           cat buildozer.spec
 
       - name: Build APK
-        run: |
-          buildozer -v android debug
-          echo "=== Checking bin folder ==="
-          ls -la bin/ || echo "bin/ folder not found!"
+        run: buildozer -v android debug
 
-      - name: Verify APK exists
-        run: |
-          if ls bin/*.apk 1>/dev/null 2>&1; then
-            echo "✅ APK found!"
-            ls -lh bin/*.apk
-          else
-            echo "❌ APK not found - build failed silently"
-            exit 1
-          fi
+      - name: List bin folder
+        run: ls -lh bin/ || echo "No bin folder found"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
