@@ -32,17 +32,4 @@ jobs:
           sed -i 's/^package.domain.*/package.domain = com.asiatech.student/' buildozer.spec
           sed -i 's/^source.include_exts.*/source.include_exts = py,png,jpg,kv,json/' buildozer.spec
           sed -i 's/^requirements.*/requirements = python3,kivy==2.3.0/' buildozer.spec
-          sed -i 's/^# (android.permissions).*/android.permissions = INTERNET/' buildozer.spec
-          sed -i 's/^#android.api.*/android.api = 33/' buildozer.spec
-          sed -i 's/^#android.minapi.*/android.minapi = 21/' buildozer.spec
-          sed -i 's/^#android.ndk.*/android.ndk = 25b/' buildozer.spec
-          sed -i 's/^#android.archs.*/android.archs = arm64-v8a/' buildozer.spec
-
-      - name: Build APK
-        run: buildozer android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
-        with:
-          name: StudentStarterPack
-          path: bin/*.apk
+          sed -i 's/^#android.api.*/android.api = 33/' buil
