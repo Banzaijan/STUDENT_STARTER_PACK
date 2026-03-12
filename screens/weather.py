@@ -14,19 +14,19 @@ from kivy.metrics import dp
 from kivy.clock import Clock
 from datetime import datetime
 
-from utils.colors import CARD, CARD2, ACCENT, TEXT, MUTED, BLACK, DIM
-from widgets.buttons import lbl, section_label
+from utils.colors import CARD, CARD2, ACCENT, ACCENT_DIM, TEXT, MUTED, BLACK, DIM, BORDER
+from widgets.buttons import lbl
 from widgets.cards import BaseScreen, CardLayout
 
 WMO_ICONS = {
-    0:"☀",1:"🌤",2:"⛅",3:"☁",45:"◌",48:"◌",
-    51:"🌦",53:"🌦",55:"🌧",61:"🌧",63:"🌧",65:"🌧",
-    80:"🌦",81:"🌧",82:"⛈",95:"⛈",96:"⛈",99:"⛈",
+    0:"☀️", 1:"🌤", 2:"⛅", 3:"☁️", 45:"🌫", 48:"🌫",
+    51:"🌦", 53:"🌦", 55:"🌧", 61:"🌧", 63:"🌧", 65:"🌧",
+    80:"🌦", 81:"🌧", 82:"⛈", 95:"⛈", 96:"⛈", 99:"⛈",
 }
 WMO_DESC = {
-    0:"CLEAR",1:"MAINLY CLEAR",2:"PARTLY CLOUDY",3:"OVERCAST",
-    45:"FOGGY",51:"LIGHT DRIZZLE",61:"LIGHT RAIN",63:"MODERATE RAIN",
-    65:"HEAVY RAIN",80:"RAIN SHOWERS",95:"THUNDERSTORM",
+    0:"Clear", 1:"Mainly Clear", 2:"Partly Cloudy", 3:"Overcast",
+    45:"Foggy", 51:"Light Drizzle", 61:"Light Rain", 63:"Moderate Rain",
+    65:"Heavy Rain", 80:"Rain Showers", 95:"Thunderstorm",
 }
 
 
@@ -35,18 +35,19 @@ class WeatherScreen(BaseScreen):
         self.clear_widgets()
         root = BoxLayout(orientation="vertical", spacing=0)
 
-        hdr = BoxLayout(size_hint_y=None, height=dp(48), padding=[dp(16), dp(6)])
-        hdr.add_widget(lbl("WEATHER  ·  MANILA", size=11, bold=True, color=TEXT))
+        hdr = BoxLayout(size_hint_y=None, height=dp(64), padding=[dp(20), dp(10)])
+        hdr.add_widget(lbl("Weather  ·  Manila", size=22, bold=True, color=TEXT,
+                           size_hint_y=None, height=dp(44)))
         root.add_widget(hdr)
 
-        self.weather_card = CardLayout(bg=CARD, radius=10,
-                                        size_hint_y=None, height=dp(80),
-                                        padding=[dp(16), dp(12)])
-        self.weather_card.add_widget(lbl("Fetching...", color=MUTED, halign="center"))
+        self.weather_card = CardLayout(bg=CARD, radius=18,
+                                       size_hint_y=None, height=dp(80),
+                                       padding=[dp(20), dp(16)])
+        self.weather_card.add_widget(lbl("Fetching weather…", size=14,
+                                         color=MUTED, halign="center"))
         root.add_widget(self.weather_card)
 
-        # calendar header
-        cal_hdr = BoxLayout(size_hint_y=None, height=dp(34), padding=[dp(16), dp(6)])
+        cal_hdr = BoxLayout(size_hint_y=None, height=dp(42), padding=[dp(20), dp(8)])
         cal_hdr.add_widget(lbl("CALENDAR", size=11, bold=True, color=MUTED))
         root.add_widget(cal_hdr)
         root.add_widget(self._build_calendar())
@@ -73,7 +74,7 @@ class WeatherScreen(BaseScreen):
 
     def _render_weather(self, data):
         self.weather_card.clear_widgets()
-        self.weather_card.height = dp(210)
+        self.weather_card.height = dp(240)
         c    = data["current"]
         d    = data["daily"]
         temp = round(c["temperature_2m"])
@@ -81,78 +82,69 @@ class WeatherScreen(BaseScreen):
         wind = c["wind_speed_10m"]
         code = c["weather_code"]
         icon = WMO_ICONS.get(code, "—")
-        desc = WMO_DESC.get(code, "UNKNOWN")
+        desc = WMO_DESC.get(code, "Unknown")
 
-        main_row = BoxLayout(size_hint_y=None, height=dp(80), spacing=dp(12))
-        main_row.add_widget(lbl(icon, size=40, halign="center",
-                                size_hint_x=None, width=dp(64)))
-        info = BoxLayout(orientation="vertical", spacing=dp(2))
-        info.add_widget(lbl(f"{temp}°C", size=34, bold=True, color=TEXT,
-                            size_hint_y=None, height=dp(46)))
-        info.add_widget(lbl(desc, size=8, bold=True, color=MUTED,
-                            size_hint_y=None, height=dp(16)))
+        main_row = BoxLayout(size_hint_y=None, height=dp(96), spacing=dp(16))
+        main_row.add_widget(lbl(icon, size=52, halign="center",
+                                size_hint_x=None, width=dp(80)))
+        info = BoxLayout(orientation="vertical", spacing=dp(4))
+        info.add_widget(lbl(f"{temp}°C", size=44, bold=True, color=TEXT,
+                            size_hint_y=None, height=dp(60)))
+        info.add_widget(lbl(desc, size=12, color=MUTED,
+                            size_hint_y=None, height=dp(22)))
         main_row.add_widget(info)
-        detail = BoxLayout(orientation="vertical", spacing=dp(4))
-        detail.add_widget(lbl(f"HUM  {hum}%", size=9, bold=True, color=MUTED,
-                              halign="right", size_hint_y=None, height=dp(18)))
-        detail.add_widget(lbl(f"WIND  {wind} km/h", size=9, bold=True, color=MUTED,
-                              halign="right", size_hint_y=None, height=dp(18)))
+        detail = BoxLayout(orientation="vertical", spacing=dp(6))
+        detail.add_widget(lbl(f"Humidity  {hum}%", size=11, color=MUTED,
+                              halign="right", size_hint_y=None, height=dp(22)))
+        detail.add_widget(lbl(f"Wind  {wind} km/h", size=11, color=MUTED,
+                              halign="right", size_hint_y=None, height=dp(22)))
         main_row.add_widget(detail)
         self.weather_card.add_widget(main_row)
 
-        day_labels = ["TODAY","D+1","D+2","D+3","D+4"]
-        fc_row = BoxLayout(size_hint_y=None, height=dp(88), spacing=dp(6))
+        day_labels = ["Today", "D+1", "D+2", "D+3", "D+4"]
+        fc_row = BoxLayout(size_hint_y=None, height=dp(106), spacing=dp(8))
         for i in range(min(5, len(d["temperature_2m_max"]))):
-            fc = CardLayout(bg=CARD2, radius=8, size_hint_x=1, padding=[dp(4), dp(6)])
-            fc.add_widget(lbl(day_labels[i], size=7, bold=True, color=MUTED,
-                              halign="center", size_hint_y=None, height=dp(14)))
+            fc = CardLayout(bg=CARD2, radius=12, size_hint_x=1, padding=[dp(6), dp(8)])
+            fc.add_widget(lbl(day_labels[i], size=9, bold=True, color=MUTED,
+                              halign="center", size_hint_y=None, height=dp(18)))
             fc.add_widget(lbl(WMO_ICONS.get(d["weather_code"][i], "—"),
-                              size=16, halign="center", size_hint_y=None, height=dp(26)))
+                              size=20, halign="center", size_hint_y=None, height=dp(30)))
             fc.add_widget(lbl(f"{round(d['temperature_2m_max'][i])}°",
-                              size=11, bold=True, color=ACCENT, halign="center",
-                              size_hint_y=None, height=dp(20)))
+                              size=13, bold=True, color=ACCENT, halign="center",
+                              size_hint_y=None, height=dp(24)))
             fc.add_widget(lbl(f"{round(d['temperature_2m_min'][i])}°",
-                              size=9, color=MUTED, halign="center",
-                              size_hint_y=None, height=dp(16)))
+                              size=11, color=MUTED, halign="center",
+                              size_hint_y=None, height=dp(20)))
             fc_row.add_widget(fc)
         self.weather_card.add_widget(fc_row)
 
     def _render_fallback(self):
         self.weather_card.clear_widgets()
         self.weather_card.add_widget(
-            lbl("No internet connection", color=MUTED, halign="center"))
+            lbl("No internet connection", size=14, color=MUTED, halign="center"))
 
     def _build_calendar(self):
         now   = datetime.now()
-        frame = CardLayout(bg=CARD, radius=10,
-                           size_hint_y=None, height=dp(260),
-                           padding=[dp(14), dp(10)])
-        frame.add_widget(lbl(now.strftime("%B %Y").upper(), size=10, bold=True,
-                             color=TEXT, size_hint_y=None, height=dp(24)))
-        day_row = BoxLayout(size_hint_y=None, height=dp(22))
-        for d in ["SU", "MO", "TU", "WE", "TH", "FR", "SA"]:
-            day_row.add_widget(lbl(d, size=8, bold=True, color=MUTED, halign="center"))
+        frame = CardLayout(bg=CARD, radius=18,
+                           size_hint_y=None, height=dp(300),
+                           padding=[dp(18), dp(14)])
+        frame.add_widget(lbl(now.strftime("%B %Y"), size=15, bold=True,
+                             color=TEXT, size_hint_y=None, height=dp(30)))
+        day_row = BoxLayout(size_hint_y=None, height=dp(28))
+        for d in ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]:
+            day_row.add_widget(lbl(d, size=11, bold=True, color=MUTED, halign="center"))
         frame.add_widget(day_row)
 
         for week in calendar.monthcalendar(now.year, now.month):
-            week_row = BoxLayout(size_hint_y=None, height=dp(32))
+            week_row = BoxLayout(size_hint_y=None, height=dp(38))
             for day in week:
                 is_today = (day == now.day)
-                if is_today:
-                    bg_col  = ACCENT
-                    txt_col = BLACK
-                elif day:
-                    bg_col  = (0, 0, 0, 0)
-                    txt_col = TEXT
-                else:
-                    bg_col  = (0, 0, 0, 0)
-                    txt_col = (0, 0, 0, 0)
                 cell = Button(
                     text=str(day) if day else "",
-                    font_size=dp(10), bold=is_today,
+                    font_size=dp(13), bold=is_today,
                     background_normal="",
-                    background_color=bg_col,
-                    color=txt_col)
+                    background_color=ACCENT if is_today else (0,0,0,0),
+                    color=BLACK if is_today else (TEXT if day else (0,0,0,0)))
                 week_row.add_widget(cell)
             frame.add_widget(week_row)
         return frame

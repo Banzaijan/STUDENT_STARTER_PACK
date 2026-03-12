@@ -1,46 +1,47 @@
-# ── BLACK & ORANGE MINIMALIST PALETTE ────────────────────────────────────────
-# Pure blacks, warm oranges, clean whites. No gradients. No noise. Just form.
+# ── MINIMAL iOS-LIKE PALETTE — SOFT BLUE / LIGHT MODE ────────────────────────
+# Clean whites, warm grays, calm blue accent. Refined. Breathable. Elegant.
 
-BG      = (0.039, 0.039, 0.039, 1.0)   # #0A0A0A  near-black base
-CARD    = (0.071, 0.071, 0.071, 1.0)   # #121212  card surface
-CARD2   = (0.110, 0.110, 0.110, 1.0)   # #1C1C1C  elevated card
-BORDER  = (0.160, 0.160, 0.160, 1.0)   # #292929  subtle border
+BG      = (0.969, 0.973, 0.976, 1.0)   # #F7F8F9  warm off-white base
+CARD    = (1.000, 1.000, 1.000, 1.0)   # #FFFFFF  pure white card
+CARD2   = (0.945, 0.949, 0.957, 1.0)   # #F1F2F4  soft input / elevated bg
+BORDER  = (0.882, 0.890, 0.902, 1.0)   # #E1E3E6  light divider
 
-ACCENT  = (1.000, 0.420, 0.000, 1.0)   # #FF6B00  pure orange
-ACCENT2 = (1.000, 0.600, 0.200, 1.0)   # #FF9933  soft orange
-ACCENT_DIM = (0.400, 0.168, 0.000, 1.0) # #662B00  dim orange for bg tints
+ACCENT      = (0.224, 0.510, 0.859, 1.0)   # #3982DB  soft blue
+ACCENT2     = (0.463, 0.682, 0.957, 1.0)   # #76AEFF  light blue tint
+ACCENT_DIM  = (0.875, 0.918, 0.980, 1.0)   # #DFEAFA  very pale blue bg
 
-TEXT    = (0.960, 0.960, 0.960, 1.0)   # #F5F5F5  near white
-MUTED   = (0.420, 0.420, 0.420, 1.0)   # #6B6B6B  muted grey
-DIM     = (0.220, 0.220, 0.220, 1.0)   # #383838  very dim
+TEXT    = (0.102, 0.118, 0.141, 1.0)   # #1A1E24  near-black
+MUTED   = (0.502, 0.529, 0.573, 1.0)   # #808793  mid gray
+DIM     = (0.714, 0.733, 0.761, 1.0)   # #B6BBC2  light gray
 
-RED     = (1.000, 0.310, 0.310, 1.0)   # #FF4F4F
-GREEN   = (0.400, 0.800, 0.560, 1.0)   # #66CC8F
-BLUE    = (0.310, 0.690, 0.940, 1.0)   # #4FB0F0
-PURPLE  = (0.690, 0.560, 0.940, 1.0)   # #B08FF0
+RED     = (0.937, 0.259, 0.259, 1.0)   # #EF4242
+GREEN   = (0.180, 0.725, 0.506, 1.0)   # #2EB981
+BLUE    = (0.224, 0.510, 0.859, 1.0)   # #3982DB  alias → same as ACCENT
+YELLOW  = (0.969, 0.718, 0.169, 1.0)   # #F7B72B
+PURPLE  = (0.537, 0.369, 0.847, 1.0)   # #895ED8
 
-NAV_BG  = (0.027, 0.027, 0.027, 1.0)   # #070707  darkest nav
-TOPBAR  = (0.039, 0.039, 0.039, 1.0)   # #0A0A0A  same as BG
-BLACK   = (0.039, 0.039, 0.039, 1.0)   # for text on orange buttons
-HIDDEN  = (0.000, 0.000, 0.000, 0.0)
+NAV_BG  = (1.000, 1.000, 1.000, 1.0)   # #FFFFFF  white nav bar
+TOPBAR  = (1.000, 1.000, 1.000, 1.0)   # #FFFFFF  white top bar
+BLACK   = (1.000, 1.000, 1.000, 1.0)   # text on accent buttons → white
+HIDDEN  = (0.000, 0.000, 0.000, 0.000)
 
 SUBJECT_COLORS = {
-    "Mathematics": (1.000, 0.420, 0.000, 1.0),
-    "English":     (0.310, 0.690, 0.940, 1.0),
-    "Physics":     (1.000, 0.600, 0.200, 1.0),
-    "History":     (0.400, 0.800, 0.560, 1.0),
-    "P.E.":        (1.000, 0.500, 0.300, 1.0),
-    "Chemistry":   (0.690, 0.560, 0.940, 1.0),
-    "Filipino":    (1.000, 0.750, 0.300, 1.0),
-    "MAPEH":       (0.400, 0.860, 0.680, 1.0),
-    "TLE":         (0.940, 0.800, 0.200, 1.0),
-    "Science":     (0.400, 0.780, 0.940, 1.0),
-    "Values Ed":   (0.800, 0.560, 0.940, 1.0),
-    "Free Period": (0.500, 0.500, 0.500, 1.0),
+    "Mathematics": (0.224, 0.510, 0.859, 1.0),   # blue
+    "English":     (0.180, 0.725, 0.506, 1.0),   # green
+    "Physics":     (0.537, 0.369, 0.847, 1.0),   # purple
+    "History":     (0.969, 0.718, 0.169, 1.0),   # yellow
+    "P.E.":        (0.937, 0.420, 0.259, 1.0),   # coral
+    "Chemistry":   (0.463, 0.682, 0.957, 1.0),   # light blue
+    "Filipino":    (0.937, 0.259, 0.259, 1.0),   # red
+    "MAPEH":       (0.180, 0.725, 0.506, 1.0),   # green
+    "TLE":         (0.969, 0.718, 0.169, 1.0),   # yellow
+    "Science":     (0.224, 0.510, 0.859, 1.0),   # blue
+    "Values Ed":   (0.537, 0.369, 0.847, 1.0),   # purple
+    "Free Period": (0.714, 0.733, 0.761, 1.0),   # dim
 }
 
 PRIORITY_COLORS = {
-    "high":   (1.000, 0.420, 0.000, 1.0),
-    "medium": (1.000, 0.750, 0.200, 1.0),
-    "low":    (0.400, 0.800, 0.560, 1.0),
+    "high":   (0.937, 0.259, 0.259, 1.0),   # red
+    "medium": (0.969, 0.718, 0.169, 1.0),   # yellow
+    "low":    (0.180, 0.725, 0.506, 1.0),   # green
 }
