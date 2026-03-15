@@ -26,7 +26,6 @@ jobs:
             openjdk-17-jdk \
             autoconf libtool pkg-config \
             libffi-dev libssl-dev libltdl-dev zlib1g-dev \
-            libgstreamer1.0-dev gstreamer1.0-plugins-base \
             build-essential cmake
 
       - name: Install Python dependencies
