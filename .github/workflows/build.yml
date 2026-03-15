@@ -3,71 +3,61 @@ name: Build APK
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Install dependencies
+      - name: Install system dependencies
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config libffi-dev libssl-dev libltdl-dev zlib1g-dev
+          sudo apt-get install -y \
+            git zip unzip \
+            openjdk-17-jdk \
+            autoconf libtool pkg-config \
+            libffi-dev libssl-dev libltdl-dev zlib1g-dev \
+            libgstreamer1.0-dev gstreamer1.0-plugins-base \
+            build-essential cmake
+
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
           pip install buildozer==1.5.0 cython==0.29.36
 
-      - name: Create init files
-        run: touch screens/__init__.py widgets/__init__.py utils/__init__.py
-
-      - name: Write buildozer.spec
+      - name: Create missing __init__.py files
         run: |
-          python3 -c "
-          spec = '''[app]
-          title = Student Starter Pack
-          package.name = studentstarterpack
-          package.domain = com.asiatech.student
-          source.dir = .
-          source.include_exts = py,png,jpg,kv,json
-          source.exclude_dirs = tests,bin,.buildozer
-          version = 1.0
-          requirements = python3,kivy==2.3.0
-          orientation = portrait
-          fullscreen = 0
-          android.permissions = INTERNET
-          android.api = 33
-          android.minapi = 21
-          android.ndk = 25b
-          android.archs = arm64-v8a
-          [buildozer]
-          log_level = 2
-          '''
-          open('buildozer.spec','w').write(spec)
-          print('spec written!')
-          "
+          mkdir -p screens widgets utils
+          touch screens/__init__.py widgets/__init__.py utils/__init__.py
 
       - name: Accept Android licenses
         run: |
           mkdir -p ~/.android
           touch ~/.android/repositories.cfg
-          yes | sudo apt-get install -y sdkmanager 2>/dev/null || true
-          export ANDROID_SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
-          mkdir -p $ANDROID_SDK_ROOT/licenses
-          echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $ANDROID_SDK_ROOT/licenses/android-sdk-license
-          echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $ANDROID_SDK_ROOT/licenses/android-sdk-license
-          echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" >> $ANDROID_SDK_ROOT/licenses/android-sdk-license
-          echo "84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_SDK_ROOT/licenses/android-sdk-preview-license
-          echo "d975f751698a77b662f1254ddbeed3901e976f5a" > $ANDROID_SDK_ROOT/licenses/intel-android-extra-license
+          mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+          echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+          echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+          echo "84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+          echo "d975f751698a77b662f1254ddbeed3901e976f5a" > ~/.buildozer/android/platform/android-sdk/licenses/intel-android-extra-license
 
       - name: Build APK
         run: buildozer -v android debug
+
+      - name: List APK output
+        run: ls -lh bin/ || echo "No bin folder — build may have failed"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: StudentStarterPack
           path: bin/*.apk
+          retention-days: 7
