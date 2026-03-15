@@ -38,23 +38,27 @@ jobs:
           mkdir -p screens widgets utils
           touch screens/__init__.py widgets/__init__.py utils/__init__.py
 
-      - name: Accept Android licenses
+      - name: Set up Android SDK for Buildozer
         run: |
-          mkdir -p ~/.android
-          touch ~/.android/repositories.cfg
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          # Link pre-installed SDK and NDK into buildozer's expected location
+          mkdir -p ~/.buildozer/android/platform
+          ln -sf $ANDROID_HOME ~/.buildozer/android/platform/android-sdk
+          ln -sf $ANDROID_NDK_HOME ~/.buildozer/android/platform/android-ndk-r25b
+
+          # Accept licenses
           mkdir -p $ANDROID_HOME/licenses
           echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $ANDROID_HOME/licenses/android-sdk-license
           echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $ANDROID_HOME/licenses/android-sdk-license
           echo "84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_HOME/licenses/android-sdk-preview-license
           echo "d975f751698a77b662f1254ddbeed3901e976f5a" > $ANDROID_HOME/licenses/intel-android-extra-license
 
-      - name: Configure Buildozer to use pre-installed SDK/NDK
-        run: |
-          # Tell buildozer to use GitHub's pre-installed Android SDK and NDK
-          mkdir -p ~/.buildozer/android/platform
-          ln -sf $ANDROID_HOME ~/.buildozer/android/platform/android-sdk
-          ln -sf $ANDROID_NDK_HOME ~/.buildozer/android/platform/android-ndk-r25b
+          # Create the legacy tools/bin/sdkmanager symlink Buildozer expects
+          mkdir -p $ANDROID_HOME/tools/bin
+          ln -sf $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager $ANDROID_HOME/tools/bin/sdkmanager
+
+          # Verify
+          echo "sdkmanager location:"
+          ls -la $ANDROID_HOME/tools/bin/sdkmanager
 
       - name: Build APK
         run: |
